@@ -1,0 +1,110 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #43281c;
+    height: 50px;
+    width: 100%;
+}
+
+h1{
+    font-size: 2em;
+    font-family: 'Open Sans', sans-serif;
+    color: wheat;
+
+}
+
+.logo{
+    position: relative;
+    height: 25px;
+}
+
+h2{
+    font-size: 18px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: lighter;
+    color: brown;
+    text-align: left;
+}
+
+
+
+.container {
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 10px;
+}
+
+.items{
+    position: relative;
+    display: inline-block;
+    text-align: left;
+    grid-area: items;
+    padding: 5px;
+    border: solid 1px brown;
+    border-radius: 5px;
+    margin: 20px;
+}
+
+.name{
+    text-align: center;
+    grid-area: name;
+    padding: 5px;
+    border: solid 1px brown;
+    border-radius: 5px;
+    margin: 20px;
+}   
+
+.payment{
+    text-align: center;
+    grid-area: payment;
+    padding: 5px;
+    border: solid 1px brown;
+    border-radius: 5px;
+    margin: 20px;
+    width: auto;
+}
+
+.card_no_box{
+    display:block;
+    padding: 20px;
+    width: max-content;
+}
+.ccv_box{
+    display:block;
+    padding: 20px;
+}
+
+.container{
+    text-align: center;
+    display: grid;
+    grid-template-areas: 
+    "items name"
+    "items payment";
+}
+
+.input {
+    border-color: brown;
+    padding: 8px;
+    border-radius: 5px;
+  }
+
+.input-label{
+    background-color: white;
+    font-size: 14px;
+    position: relative;
+    left: 100px;
+    top: -18px;
+    padding: 0 2px;
+}
+    
+
+.checkout-details{
+    text-align: center;
+}
+
+.submit{
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
