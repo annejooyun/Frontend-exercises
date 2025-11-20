@@ -1,0 +1,137 @@
+* {
+    box-sizing: border-box;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.buttons{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+        "result result result result"
+        "clear clear del div"
+        "7 8 9 mul"
+        "4 5 6 sub"
+        "1 2 3 add"
+        "zero zero zero equal";
+    gap: 2px;
+    background-color: black;
+    border: 2px solid black;
+
+}
+
+.result {
+    grid-area: result;
+    color: white;
+    text-align: right;
+    font-family: monospace;
+    font-size: 2.5rem;
+    padding: 10px;
+}
+
+.clear{
+    grid-area: clear;
+}
+
+.del {
+    grid-area: del; 
+}
+
+.div {
+    grid-area: div; 
+}
+
+.\7 {
+    grid-area: 7; 
+} 
+
+.\8 {
+    grid-area: 8; 
+}
+
+.\9 {
+    grid-area: 9; 
+}   
+
+.mul {
+    grid-area: mul; 
+}
+
+.\4 {
+    grid-area: 4; 
+}   
+
+.\5 {
+    grid-area: 5; 
+}   
+
+.\6 {
+    grid-area: 6; 
+}   
+
+.sub {
+    grid-area: sub; 
+}
+
+.\1 {
+    grid-area: 1; 
+}
+
+.\2 {
+    grid-area: 2; 
+}
+
+.\3 {
+    grid-area: 3; 
+}
+
+.add {
+    grid-area: add; 
+}
+
+.\zero {
+    grid-area: zero; 
+}
+
+.equal {
+    grid-area: equal; 
+}   
+
+
+.button {
+    padding: 30px;
+    font-size: 2.5rem;
+    border: none;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.operator {
+    background-color: #f0ad4e;
+    color: white;
+}
+
+.number, .clear, .del {
+    background-color: #e6e6e6;
+}
+
+.number:hover, .clear:hover, .del:hover {
+    background-color: #ebebeb;
+}
+
+.number:active, .clear:active, .del:active{
+    background-color: #bbbcbe;
+}
+
+.operator:hover {
+    background-color: #dfb07e;
+}
+
+.operator:active {
+    background-color: #dd8d37;
+}   
