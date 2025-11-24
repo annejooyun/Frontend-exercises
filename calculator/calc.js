@@ -18,8 +18,8 @@ const numberButtons = document.querySelectorAll(".number");
 // Number button event listener
 numberButtons.forEach(function(button) {
     button.addEventListener("click", function() {
-    currentInput += Number(button.innerText);
-    document.querySelector(".result").innerText = currentInput;
+        currentInput += Number(button.innerText);
+        document.querySelector(".result").innerText = currentInput;
     });
 });
 
@@ -65,10 +65,10 @@ equalButton.addEventListener("click", function () {
         lastResult = Number(lastResult) + Number(currentInput);
         currentInput = "";
     }
-    elif (lastButton === "sub") {
+    else if (lastButton === "sub") {
             lastResult = Number(lastResult) - Number(currentInput);
             currentInput = "";
-        }
+    }
 
     document.querySelector(".result").innerText = lastResult;
     lastButton = "equal";

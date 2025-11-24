@@ -15,9 +15,9 @@
     grid-template-areas:
         "result result result result"
         "clear clear del div"
-        "7 8 9 mul"
-        "4 5 6 sub"
-        "1 2 3 add"
+        "seven eight nine mul"
+        "four five six sub"
+        "one two three add"
         "zero zero zero equal";
     gap: 2px;
     background-color: black;
@@ -46,55 +46,55 @@
     grid-area: div; 
 }
 
-.\7 {
-    grid-area: 7; 
+.seven {
+    grid-area: seven; 
 } 
 
-.\8 {
-    grid-area: 8; 
+.eight {
+    grid-area: eight; 
 }
 
-.\9 {
-    grid-area: 9; 
+.nine {
+    grid-area: nine; 
 }   
 
 .mul {
     grid-area: mul; 
 }
 
-.\4 {
-    grid-area: 4; 
+.four {
+    grid-area: four; 
 }   
 
 .\5 {
-    grid-area: 5; 
+    grid-area: five; 
 }   
 
-.\6 {
-    grid-area: 6; 
+.\six {
+    grid-area: six; 
 }   
 
 .sub {
     grid-area: sub; 
 }
 
-.\1 {
-    grid-area: 1; 
+.one {
+    grid-area: one; 
 }
 
-.\2 {
-    grid-area: 2; 
+.two {
+    grid-area: two; 
 }
 
-.\3 {
-    grid-area: 3; 
+.three {
+    grid-area: three; 
 }
 
 .add {
     grid-area: add; 
 }
 
-.\zero {
+.zero {
     grid-area: zero; 
 }
 
