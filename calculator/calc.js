@@ -13,7 +13,6 @@ numberButtons.forEach(function (button) {
   button.addEventListener("click", function () {
     handleNumber(Number(button.innerText));
     updateResult();
-    console.log(buffer);
   });
 });
 
@@ -42,37 +41,60 @@ function handleNumber(value) {
 }
 
 function handleOperator(value) {
-  switch (value) {
-    case "C":
-      buffer = "0";
-      runningTotal = 0;
-      console.log("C button pressed. Buffer is", buffer);
-      break;
-    case "←":
-      buffer = buffer.slice(0, -1);
-      console.log(buffer);
-      break;
-    case "÷":
-      console.log("Divide pressed");
-      break;
-    case "x":
-      console.log("Multiply pressed");
-      break;
-    case "-":
-      console.log("Minus pressed");
-      break;
-    case "+":
-      console.log("Plus pressed");
-      break;
-    case "=":
-      console.log("Equals pressed");
-      break;
+  if (value === "C") {
+    buffer = "0";
+    runningTotal = 0;
+    console.log("C button pressed. Buffer is", buffer);
+  } else if (value === "←") {
+    buffer = buffer.slice(0, -1);
+    console.log(buffer);
+  } else if (value === "=") {
+    handleMath();
+  } else {
+    handleMath();
+    switch (value) {
+      case "÷":
+        console.log("Divide pressed");
+        lastOperator = "div";
+        break;
+      case "x":
+        console.log("Multiply pressed");
+        lastOperator = "mul";
+        break;
+      case "-":
+        console.log("Minus pressed");
+        lastOperator = "min";
+        break;
+      case "+":
+        console.log("Plus pressed");
+        lastOperator = "plu";
+        break;
+    }
+    flushBuffer();
   }
   updateResult();
 }
 
+function handleMath() {
+  if (buffer !== 0 && runningTotal !== 0) {
+    switch (lastOperator) {
+      case "plu":
+        runningTotal += Number(buffer);
+        break;
+      case "min":
+        runningTotal -= Number(buffer);
+        break;
+      case "mul":
+        runningTotal *= Number(buffer);
+        break;
+      case "div":
+        runningTotal /= Number(buffer);
+        break;
+    }
+  }
+}
+
 function flushBuffer() {
-  runningTotal = Number(buffer);
   buffer = "0";
 }
 
