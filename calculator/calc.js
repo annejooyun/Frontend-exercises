@@ -1,4 +1,5 @@
 let buffer = "0";
+let runningTotal = 0;
 let lastOperator = null;
 
 // Operator button
@@ -12,6 +13,14 @@ numberButtons.forEach(function (button) {
   button.addEventListener("click", function () {
     handleNumber(Number(button.innerText));
     updateResult();
+    console.log(buffer);
+  });
+});
+
+// Operator button event listener
+operatorButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    handleOperator(button.innerText);
   });
 });
 
@@ -20,13 +29,51 @@ function updateResult() {
   document.querySelector(".result").innerText = buffer;
 }
 
-//
+// Updates buffer when a number is clicked
 function handleNumber(value) {
   if (buffer === "0") {
     buffer = value.toString();
+    console.log("buffer is zero");
   } else {
+    console.log("buffer before", buffer);
     buffer += value.toString();
+    console.log("buffer after", buffer);
   }
+}
+
+function handleOperator(value) {
+  switch (value) {
+    case "C":
+      buffer = "0";
+      runningTotal = 0;
+      console.log("C button pressed. Buffer is", buffer);
+      break;
+    case "←":
+      buffer = buffer.slice(0, -1);
+      console.log(buffer);
+      break;
+    case "÷":
+      console.log("Divide pressed");
+      break;
+    case "x":
+      console.log("Multiply pressed");
+      break;
+    case "-":
+      console.log("Minus pressed");
+      break;
+    case "+":
+      console.log("Plus pressed");
+      break;
+    case "=":
+      console.log("Equals pressed");
+      break;
+  }
+  updateResult();
+}
+
+function flushBuffer() {
+  runningTotal = Number(buffer);
+  buffer = "0";
 }
 
 /*
