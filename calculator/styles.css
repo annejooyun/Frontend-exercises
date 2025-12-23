@@ -9,7 +9,7 @@
     width: 100%;
 }
 
-.buttons{
+.buttons {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-areas:
@@ -22,7 +22,6 @@
     gap: 2px;
     background-color: black;
     border: 2px solid black;
-
 }
 
 .result {
@@ -34,74 +33,73 @@
     padding: 10px;
 }
 
-.clear{
+.clear {
     grid-area: clear;
 }
 
 .del {
-    grid-area: del; 
+    grid-area: del;
 }
 
 .div {
-    grid-area: div; 
+    grid-area: div;
 }
 
 .seven {
-    grid-area: seven; 
-} 
+    grid-area: seven;
+}
 
 .eight {
-    grid-area: eight; 
+    grid-area: eight;
 }
 
 .nine {
-    grid-area: nine; 
-}   
+    grid-area: nine;
+}
 
 .mul {
-    grid-area: mul; 
+    grid-area: mul;
 }
 
 .four {
-    grid-area: four; 
-}   
+    grid-area: four;
+}
 
 .\5 {
-    grid-area: five; 
-}   
+    grid-area: five;
+}
 
 .\six {
-    grid-area: six; 
-}   
+    grid-area: six;
+}
 
 .sub {
-    grid-area: sub; 
+    grid-area: sub;
 }
 
 .one {
-    grid-area: one; 
+    grid-area: one;
 }
 
 .two {
-    grid-area: two; 
+    grid-area: two;
 }
 
 .three {
-    grid-area: three; 
+    grid-area: three;
 }
 
 .add {
-    grid-area: add; 
+    grid-area: add;
 }
 
 .zero {
-    grid-area: zero; 
+    grid-area: zero;
 }
 
 .equal {
-    grid-area: equal; 
-}   
-
+    grid-area: equal;
+}
 
 .button {
     padding: 30px;
@@ -116,15 +114,18 @@
     color: white;
 }
 
-.number, .clear, .del {
+.number,
+.clear,
+.del {
     background-color: #e6e6e6;
+    color: black;
 }
 
-.number:hover, .clear:hover, .del:hover {
+.number:hover {
     background-color: #ebebeb;
 }
 
-.number:active, .clear:active, .del:active{
+.number:active {
     background-color: #bbbcbe;
 }
 
@@ -134,4 +135,17 @@
 
 .operator:active {
     background-color: #dd8d37;
-}   
+}
+
+.clear:hover {
+    background-color: #ebebeb;
+}
+
+.clear:active,
+.del:active {
+    background-color: #bbbcbe;
+}
+
+.del:hover {
+    background-color: #ebebeb;
+}
