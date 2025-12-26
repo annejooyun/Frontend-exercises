@@ -12,7 +12,7 @@ const numberButtons = document.querySelectorAll(".number");
 numberButtons.forEach(function (button) {
   button.addEventListener("click", function () {
     handleNumber(Number(button.innerText));
-    updateResult();
+    updateResult(buffer);
   });
 });
 
@@ -24,8 +24,8 @@ operatorButtons.forEach(function (button) {
 });
 
 // Update the result shown on the screen
-function updateResult() {
-  document.querySelector(".result").innerText = buffer;
+function updateResult(value) {
+  document.querySelector(".result").innerText = value;
 }
 
 // Updates buffer when a number is clicked
@@ -34,9 +34,7 @@ function handleNumber(value) {
     buffer = value.toString();
     console.log("buffer is zero");
   } else {
-    console.log("buffer before", buffer);
     buffer += value.toString();
-    console.log("buffer after", buffer);
   }
 }
 
@@ -50,6 +48,8 @@ function handleOperator(value) {
     console.log(buffer);
   } else if (value === "=") {
     handleMath();
+    buffer = "0";
+    updateResult(runningTotal);
   } else {
     handleMath();
     switch (value) {
@@ -70,9 +70,11 @@ function handleOperator(value) {
         lastOperator = "plu";
         break;
     }
-    flushBuffer();
+    runningTotal = Number(buffer);
+    console.log("runningtotal updated to", runningTotal);
+    buffer = "0";
   }
-  updateResult();
+  updateResult(runningTotal);
 }
 
 function handleMath() {
@@ -80,6 +82,7 @@ function handleMath() {
     switch (lastOperator) {
       case "plu":
         runningTotal += Number(buffer);
+        console.log("running total is", runningTotal);
         break;
       case "min":
         runningTotal -= Number(buffer);
@@ -92,10 +95,6 @@ function handleMath() {
         break;
     }
   }
-}
-
-function flushBuffer() {
-  buffer = "0";
 }
 
 /*
