@@ -1,3 +1,23 @@
 body {
     text-align: center;
+    font-size: 300%;
+}
+
+.letter {
+    border: solid;
+    border-color: #aab6d2;
+    border-width: 4px;
+    margin: 10px;
+    padding: 5px;
+    height: 7vh;
+    width: 7vh;
+}
+
+.guess {
+    display: flex;
+    justify-content: center;
+}
+
+.main-header {
+    font-size: 150%;
 }
