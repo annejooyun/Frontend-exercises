@@ -9,19 +9,25 @@ window.addEventListener("keyup", handleKeyUp);
 function handleKeyUp(event) {
   const key = event.key;
   if (isLetter(key)) {
-    if (inputedGuess.length < maxLengthGuess) {
+    if (inputedGuess.length < maxLengthGuess && numGuesses < maxNumGuesses) {
       inputedGuess += key;
       showLetter(key);
     }
-    // else if backspace -> removeLetter.
-    // Slice inputedGuess and remove inner text from prev className
-    //
-    // else if enter -> enterGuess
-    // check if guess is a word
-    // check if guess is correct
-    // looots of logic is needed here
-    //
-    // maybe code hardmode?
+  } else if (key === "Enter") {
+    if (inputedGuess.length < maxLengthGuess) {
+      console.log("The guess is not long enough. Insert a 5-letter word!");
+    } else {
+      // check if guess is a word
+      // check if guess is correct
+      // include logic for checking for duplicates in guess, but not in answer
+      // update colors for letters
+      //
+      // numGuesses += 1;
+      // maybe code hardmode?
+    }
+  } else if (key === "Backspace") {
+    removeLastLetter();
+    inputedGuess = inputedGuess.slice(0, -1);
   }
 }
 
@@ -31,7 +37,15 @@ function showLetter(letter) {
 
   let className = ".box_" + row + "-" + col;
   console.log(className);
-  document.querySelector(className).innerText = letter;
+  document.querySelector(className).innerText = letter.toUpperCase();
+}
+
+function removeLastLetter() {
+  let row = String(numGuesses + 1);
+  let col = String(inputedGuess.length);
+
+  let className = ".box_" + row + "-" + col;
+  document.querySelector(className).innerText = "";
 }
 
 function isLetter(letter) {
