@@ -12,12 +12,18 @@ async function getWordOfTheDay() {
 
 async function checkGuess() {
   const word = await getWordOfTheDay();
-  console.log("Your guess", inputedGuess, "word", word);
+  console.log("Your guess", inputedGuess);
   return word === inputedGuess;
 }
 
 async function checkIsWord() {
-  //const promise = await
+  const promise = await fetch("https://words.dev-apis.com/validate-word", {
+    method: "POST",
+    body: JSON.stringify({ word: inputedGuess }),
+  });
+  const processedResponse = await promise.json();
+  console.log(processedResponse);
+  return processedResponse.validWord;
 }
 
 window.addEventListener("keyup", handleKeyUp);
@@ -26,7 +32,7 @@ async function handleKeyUp(event) {
   const key = event.key;
   if (isLetter(key)) {
     if (inputedGuess.length < maxLengthGuess && numGuesses < maxNumGuesses) {
-      inputedGuess += key;
+      inputedGuess += key.toLowerCase();
       showLetter(key);
     }
   } else if (key === "Backspace") {
@@ -37,10 +43,15 @@ async function handleKeyUp(event) {
       console.log("The guess is not long enough. Insert a 5-letter word!");
     } else {
       if (await checkGuess()) {
-        console.log("Congrats!!!");
+        console.log("Congrats, you guessed it!!");
+        turnGuessGreen();
+      } else {
+        if (await checkIsWord()) {
+          console.log("Hmm not quite");
+          numGuesses += 1;
+          inputedGuess = "";
+        }
       }
-      // check if guess is a word
-      // check if guess is correct
       // include logic for checking for duplicates in guess, but not in answer
       // update colors for letters
       //
@@ -69,4 +80,13 @@ function removeLastLetter() {
 
 function isLetter(letter) {
   return /^[a-zA-Z]$/.test(letter);
+}
+
+function turnGuessGreen() {
+  for (let i = 1; i <= maxLengthGuess; i++) {
+    row = numGuesses + 1;
+    className = ".box_" + row + "-" + i;
+    document.querySelector(className).style.backgroundColor = "green";
+    document.querySelector(className).style.color = "white";
+  }
 }
