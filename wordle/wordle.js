@@ -4,16 +4,19 @@ let numGuesses = 0;
 const maxLengthGuess = 5;
 const maxNumGuesses = 6;
 
+const wordOfTheDayPromise = getWordOfTheDay();
+
 async function getWordOfTheDay() {
   const promise = await fetch("https://words.dev-apis.com/word-of-the-day");
-  const processedResponse = await promise.json();
-  return processedResponse.word;
+  const { word: wordRes } = await promise.json();
+  return wordRes;
 }
 
 async function checkGuess() {
-  const word = await getWordOfTheDay();
+  const wordOfTheDayString = await wordOfTheDayPromise;
   console.log("Your guess", inputedGuess);
-  return word === inputedGuess;
+  console.log(typeof wordOfTheDayString);
+  return wordOfTheDayString === inputedGuess;
 }
 
 async function checkIsWord() {
@@ -44,10 +47,12 @@ async function handleKeyUp(event) {
     } else {
       if (await checkGuess()) {
         console.log("Congrats, you guessed it!!");
-        turnGuessGreen();
+        changeGuessColorsCorrect();
       } else {
         if (await checkIsWord()) {
           console.log("Hmm not quite");
+          resultArray = await handleIncorrectGuess();
+
           numGuesses += 1;
           inputedGuess = "";
         }
@@ -82,11 +87,50 @@ function isLetter(letter) {
   return /^[a-zA-Z]$/.test(letter);
 }
 
-function turnGuessGreen() {
+function changeGuessColorsCorrect() {
+  // This function could recieve an array input instead, and change color of the letter positon depending on the array input
+  // 0: Letter is not in word, 1: Letter is in word, but at the wrong place, 2: Letter is in the correct spot
+  // F. ex., Word: HEARTH and guess: EARTH would give [1,1,2,2,1]
+  // And Word: NOVEL and guess: EARTH would give [1, 0, 0, 0]
+  // This would merge changeGuessColorsCorrect and changeGuessColorsIncorrect
   for (let i = 1; i <= maxLengthGuess; i++) {
     row = numGuesses + 1;
     className = ".box_" + row + "-" + i;
     document.querySelector(className).style.backgroundColor = "green";
     document.querySelector(className).style.color = "white";
   }
+}
+
+async function changeGuessColorsIncorrect() {}
+
+async function handleIncorrectGuess() {
+  // Find number of correct letters in correct spaces
+  // Find number of correct letters in incorrect spaces
+  // Handle duplicates: guess: HOPPY and answer: PANTS should only give one yellow letter
+  //return ??
+  const wordOfTheDayString = await wordOfTheDayPromise;
+  let wordOfTheDayArray = wordOfTheDayString.split("");
+
+  let guessArray = [];
+
+  for (let i = 0; i < maxLengthGuess; i++) {
+    let letter = inputedGuess.charAt(i);
+    if (wordOfTheDayArray.includes(letter)) {
+      console.log(letter, "in word", wordOfTheDayString);
+      if (wordOfTheDayArray[i] === letter) {
+        guessArray[i] = 2;
+        wordOfTheDayArray[i] = "0";
+        console.log(wordOfTheDayArray);
+      } else {
+        guessArray[i] = 1;
+        wordOfTheDayArray[i] = "0";
+        console.log(wordOfTheDayArray);
+      }
+    } else {
+      console.log(letter, "not in word", wordOfTheDayString);
+      guessArray[i] = 0;
+    }
+  }
+  console.log(guessArray);
+  return guessArray;
 }
