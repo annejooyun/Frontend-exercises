@@ -1,16 +1,20 @@
 body {
     text-align: center;
     font-size: 300%;
+    background-color: black;
+    color: white;
 }
 
 .letter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: solid;
     border-color: #aab6d2;
     border-width: 4px;
     margin: 10px;
-    padding: 5px;
-    height: 7vh;
-    width: 7vh;
+    height: 10vh;
+    width: 10vb;
 }
 
 .guess {
@@ -20,4 +24,8 @@ body {
 
 .main-header {
     font-size: 150%;
+}
+
+h2 {
+    font-size: 80%;
 }
