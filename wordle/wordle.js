@@ -10,6 +10,7 @@ window.addEventListener("keyup", handleKeyUp);
 async function getWordOfTheDay() {
   const promise = await fetch("https://words.dev-apis.com/word-of-the-day");
   const { word: wordRes } = await promise.json();
+  //console.log(wordRes);
   return wordRes;
 }
 
@@ -29,14 +30,24 @@ async function checkIsWord() {
 
 async function handleKeyUp(event) {
   const key = event.key;
+
+  // If key is a letter
   if (isLetter(key)) {
     if (inputedGuess.length < maxLengthGuess && numGuesses < maxNumGuesses) {
       inputedGuess += key.toLowerCase();
       showLetter(key);
     }
+
+    // If key is Backspace
   } else if (key === "Backspace") {
-    removeLastLetter();
-    inputedGuess = inputedGuess.slice(0, -1);
+    if (inputedGuess === "") {
+      // Do nothing
+    } else {
+      removeLastLetter();
+      inputedGuess = inputedGuess.slice(0, -1);
+    }
+
+    // If key is Enter
   } else if (key === "Enter") {
     if (inputedGuess.length < maxLengthGuess) {
       window.confirm("The guess is not long enough. Insert a 5-letter word!");
@@ -50,6 +61,9 @@ async function handleKeyUp(event) {
           changeGuessColors(resultArray);
           numGuesses += 1;
           inputedGuess = "";
+          if (numGuesses === maxNumGuesses) {
+            console.log(await wordOfTheDayPromise);
+          }
         }
       }
       // maybe code hardmode?
@@ -105,20 +119,34 @@ async function handleIncorrectGuess() {
 
   let guessArray = [];
 
+  // Check for correct letters in correct spots
+  // This is done first, in case of correct letters in incorrect spots early in the guess
+  // F. ex: Guess: POPPY word: HOPPY
   for (let i = 0; i < maxLengthGuess; i++) {
     let letter = inputedGuess.charAt(i);
+
     if (wordOfTheDayArray.includes(letter)) {
       if (wordOfTheDayArray[i] === letter) {
         guessArray[i] = 2;
         wordOfTheDayArray[i] = "0";
-      } else {
-        guessArray[i] = 1;
-        const letterIndex = wordOfTheDayString.indexOf(letter);
-        wordOfTheDayArray[letterIndex] = "0";
       }
-    } else {
-      guessArray[i] = 0;
     }
   }
+
+  // Check for correct letters in incorrect spots
+  for (let j = 0; j < maxLengthGuess; j++) {
+    let letter = inputedGuess.charAt(j);
+
+    if (wordOfTheDayArray.includes(letter)) {
+      guessArray[j] = 1;
+      const letterIndex = wordOfTheDayString.indexOf(letter);
+      wordOfTheDayArray[letterIndex] = "0";
+
+      // Check for incorrect letters but do not overwrite the correct ones
+    } else if (wordOfTheDayArray[j] !== "0") {
+      guessArray[j] = 0;
+    }
+  }
+  console.log(guessArray);
   return guessArray;
 }
