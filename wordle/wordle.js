@@ -1,5 +1,6 @@
 let inputedGuess = "";
 let numGuesses = 0;
+let lastKeyEnter = false;
 
 const maxLengthGuess = 5;
 const maxNumGuesses = 6;
@@ -33,6 +34,7 @@ async function handleKeyUp(event) {
 
   // If key is a letter
   if (isLetter(key)) {
+    lastKeyEnter = false;
     if (inputedGuess.length < maxLengthGuess && numGuesses < maxNumGuesses) {
       inputedGuess += key.toLowerCase();
       showLetter(key);
@@ -40,6 +42,7 @@ async function handleKeyUp(event) {
 
     // If key is Backspace
   } else if (key === "Backspace") {
+    lastKeyEnter = false;
     if (inputedGuess === "") {
       // Do nothing
     } else {
@@ -48,22 +51,31 @@ async function handleKeyUp(event) {
     }
 
     // If key is Enter
-  } else if (key === "Enter") {
+  } else if (key === "Enter" && !lastKeyEnter) {
+    lastKeyEnter = true;
+
+    // If guess is not long enough
     if (inputedGuess.length < maxLengthGuess) {
       window.confirm("The guess is not long enough. Insert a 5-letter word!");
     } else {
+      // Check if guess is correct
       if (await checkGuess()) {
         changeGuessColors([2, 2, 2, 2, 2]);
         window.confirm("Congrats, you guessed it!!");
       } else {
+        // Check if guess is a valid word
         if (await checkIsWord()) {
           const resultArray = await handleIncorrectGuess();
           changeGuessColors(resultArray);
           numGuesses += 1;
           inputedGuess = "";
+          // Check if user is out of guesses
           if (numGuesses === maxNumGuesses) {
             console.log(await wordOfTheDayPromise);
           }
+          // Alert if guess is not a valid word
+        } else {
+          alert("That is not a valid word!");
         }
       }
       // maybe code hardmode?
@@ -146,7 +158,6 @@ async function handleIncorrectGuess() {
 
     // Check for correct letters in incorrect spots
     if (wordOfTheDayArray.includes(letter)) {
-      console.log("yes, the word includes letter ", letter);
       guessArray[j] = 1;
       wordOfTheDayArray[j] = "0";
 
@@ -154,9 +165,7 @@ async function handleIncorrectGuess() {
     } else if (wordOfTheDayArray[j] !== "0") {
       guessArray[j] = 0;
 
-      // If all else fails
-    } else {
-      console.log("Error: could not place letter in a category");
+      // If all else fails, the guessArray will have a "3" stored that will trigger an error message in the console.
     }
   }
   return guessArray;
