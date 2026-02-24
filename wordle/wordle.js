@@ -71,7 +71,8 @@ async function handleKeyUp(event) {
           inputedGuess = "";
           // Check if user is out of guesses
           if (numGuesses === maxNumGuesses) {
-            console.log(await wordOfTheDayPromise);
+            word = await wordOfTheDayPromise;
+            alert("Out of guesses. The word was: " +  word)
           }
           // Alert if guess is not a valid word
         } else {
@@ -120,9 +121,6 @@ function changeGuessColors(resultArray) {
         document.querySelector(className).style.backgroundColor = "darkgreen";
         document.querySelector(className).style.color = "white";
         break;
-      case 3: //Error
-        console.log("ERROR!");
-        break;
     }
   }
 }
@@ -135,8 +133,8 @@ async function handleIncorrectGuess() {
   let wordOfTheDayArray = wordOfTheDayString.split("");
 
   // 0: Incorrect letter, 1: Correct letter in incorrect spot
-  // 2: Correct letter in correct spot, 3: Error case
-  let guessArray = [3, 3, 3, 3, 3];
+  // 2: Correct letter in correct spot
+  let guessArray = [0, 0, 0, 0, 0];
 
   // Check for correct letters in correct spots
   // This is done first, in case of correct letters in incorrect spots early in the guess
@@ -148,6 +146,7 @@ async function handleIncorrectGuess() {
       if (wordOfTheDayArray[i] === letter) {
         guessArray[i] = 2;
         wordOfTheDayArray[i] = "0";
+        console.log(wordOfTheDayArray);
       }
     }
   }
@@ -159,13 +158,13 @@ async function handleIncorrectGuess() {
     // Check for correct letters in incorrect spots
     if (wordOfTheDayArray.includes(letter)) {
       guessArray[j] = 1;
-      wordOfTheDayArray[j] = "0";
+      // Find index for the letter in guess
+      k = wordOfTheDayArray.indexOf(letter);
+      wordOfTheDayArray[k] = "0";
 
       // Check for incorrect letters but do not overwrite the correct ones
     } else if (wordOfTheDayArray[j] !== "0") {
       guessArray[j] = 0;
-
-      // If all else fails, the guessArray will have a "3" stored that will trigger an error message in the console.
     }
   }
   return guessArray;
