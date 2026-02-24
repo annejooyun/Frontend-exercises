@@ -32,3 +32,9 @@ body {
 h2 {
     font-size: 80%;
 }
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
