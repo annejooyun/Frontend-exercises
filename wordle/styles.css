@@ -20,26 +20,28 @@ body {
     min-width: 60px;
 }
 
-.kb-letter{
+
+button{
+    border: none;
     border-radius: 10px;
-    border-color: gray;
-    background-color: gray;
-    border-width: 4px;
-    margin: 5px;
-    padding: 6px;
-    min-height: 50px;
-    min-width: 50px;
+    margin: 2.5px;
+    text-decoration: none;
+    text-align: center;
+    background: gray;
+    color: white;
+    padding: 1.5rem;
+    font-size: 1.2rem;
+    height: 70px;
+    width: 70px; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
 }
 
-.button{
-    border-radius: 10px;
-    border-color: gray;
-    background-color: gray;
-    margin: 5px;
-    padding: 6px;
-    min-height: 50px;
-    min-width: 50px;
+#back , #enter{
+    width: 100px;
 }
+
 
 .guess {
     display: flex;
