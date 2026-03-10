@@ -48,23 +48,27 @@ function handleBackspace() {
 async function handleEnter() {
     // If guess is not long enough
   if (inputedGuess.length < maxLengthGuess) {
-    window.confirm("The guess is not long enough. Insert a 5-letter word!");
+    alert("The guess is not long enough. Insert a 5-letter word!");
   } else {
     // Check if guess is correct
     if (await checkGuess()) {
+      changeButtonColors([2, 2, 2, 2, 2]);
       changeGuessColors([2, 2, 2, 2, 2]);
-      window.confirm("Congrats, you guessed it!!");
+      await new Promise(resolve => setTimeout(resolve, 100));
+      alert("Congrats, you guessed it!!");
     } else {
       // Check if guess is a valid word
       if (await checkIsWord()) {
         const resultArray = await handleIncorrectGuess();
+        changeButtonColors(resultArray);
         changeGuessColors(resultArray);
         numGuesses += 1;
         inputedGuess = "";
         // Check if user is out of guesses
         if (numGuesses === maxNumGuesses) {
           word = await wordOfTheDayPromise;
-          alert("Out of guesses. The word was: " +  word)
+          await new Promise(resolve => setTimeout(resolve, 100));
+          alert("Out of guesses. The word was " +  word.toUpperCase())
         }
         // Alert if guess is not a valid word
       } else {
@@ -168,6 +172,36 @@ function changeGuessColors(resultArray) {
     }
   }
 }
+
+
+function changeButtonColors(resultArray) {
+  for (let i = 0; i < maxLengthGuess; i++) {
+    const letter = inputedGuess[i].toUpperCase();
+
+
+    // Find the button with matching text content
+    const buttons = document.querySelectorAll(".keyboard button");
+    const button = Array.from(buttons).find(btn => btn.innerHTML === letter);
+    
+    if (button) {
+      switch (resultArray[i]) {
+        case 0: // Wrong letter
+          button.style.backgroundColor = "gray";
+          button.style.color = "white";
+          break;
+        case 1: // Correct letter in wrong spot
+          button.style.backgroundColor = "goldenrod";
+          button.style.color = "white";
+          break;
+        case 2: // Correct letter in correct spot
+          button.style.backgroundColor = "darkgreen";
+          button.style.color = "white";
+          break;
+      }
+    }
+  }
+}
+
 
 async function handleIncorrectGuess() {
   // Find number of correct letters in correct spaces
