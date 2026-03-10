@@ -6,7 +6,6 @@ const maxLengthGuess = 5;
 const maxNumGuesses = 6;
 
 const wordOfTheDayPromise = getWordOfTheDay();
-window.addEventListener("keyup", handleKeyUp);
 
 async function getWordOfTheDay() {
   const promise = await fetch("https://words.dev-apis.com/word-of-the-day");
@@ -29,60 +28,105 @@ async function checkIsWord() {
   return processedResponse.validWord;
 }
 
+
+function handleLetter(letter) {
+  if (inputedGuess.length < maxLengthGuess && numGuesses < maxNumGuesses) {
+      inputedGuess += letter.toLowerCase();
+      showLetter(letter);
+  }
+}
+
+function handleBackspace() {
+  if (inputedGuess === "") {
+      // Do nothing
+    } else {
+      removeLastLetter();
+      inputedGuess = inputedGuess.slice(0, -1);
+    }
+}
+
+async function handleEnter() {
+    // If guess is not long enough
+  if (inputedGuess.length < maxLengthGuess) {
+    window.confirm("The guess is not long enough. Insert a 5-letter word!");
+  } else {
+    // Check if guess is correct
+    if (await checkGuess()) {
+      changeGuessColors([2, 2, 2, 2, 2]);
+      window.confirm("Congrats, you guessed it!!");
+    } else {
+      // Check if guess is a valid word
+      if (await checkIsWord()) {
+        const resultArray = await handleIncorrectGuess();
+        changeGuessColors(resultArray);
+        numGuesses += 1;
+        inputedGuess = "";
+        // Check if user is out of guesses
+        if (numGuesses === maxNumGuesses) {
+          word = await wordOfTheDayPromise;
+          alert("Out of guesses. The word was: " +  word)
+        }
+        // Alert if guess is not a valid word
+      } else {
+        alert("That is not a valid word!");
+      }
+    }
+  }
+}
+
+
 async function handleKeyUp(event) {
   const key = event.key;
 
   // If key is a letter
   if (isLetter(key)) {
     lastKeyEnter = false;
-    if (inputedGuess.length < maxLengthGuess && numGuesses < maxNumGuesses) {
-      inputedGuess += key.toLowerCase();
-      showLetter(key);
-    }
+    handleLetter(key);
 
     // If key is Backspace
   } else if (key === "Backspace") {
     lastKeyEnter = false;
-    if (inputedGuess === "") {
-      // Do nothing
-    } else {
-      removeLastLetter();
-      inputedGuess = inputedGuess.slice(0, -1);
-    }
+    handleBackspace();
 
     // If key is Enter
   } else if (key === "Enter" && !lastKeyEnter) {
     lastKeyEnter = true;
-
-    // If guess is not long enough
-    if (inputedGuess.length < maxLengthGuess) {
-      window.confirm("The guess is not long enough. Insert a 5-letter word!");
-    } else {
-      // Check if guess is correct
-      if (await checkGuess()) {
-        changeGuessColors([2, 2, 2, 2, 2]);
-        window.confirm("Congrats, you guessed it!!");
-      } else {
-        // Check if guess is a valid word
-        if (await checkIsWord()) {
-          const resultArray = await handleIncorrectGuess();
-          changeGuessColors(resultArray);
-          numGuesses += 1;
-          inputedGuess = "";
-          // Check if user is out of guesses
-          if (numGuesses === maxNumGuesses) {
-            word = await wordOfTheDayPromise;
-            alert("Out of guesses. The word was: " +  word)
-          }
-          // Alert if guess is not a valid word
-        } else {
-          alert("That is not a valid word!");
-        }
-      }
+    handleEnter();
       // maybe code hardmode?
-    }
   }
 }
+
+
+async function handleButtonClick(event) {
+  
+  const buttonValue = event.target.innerHTML;
+  console.log(buttonValue);
+ 
+  if (event.target.tagName !== "BUTTON") {
+    console.log("Not a button");
+    return;
+  }
+
+  // If button pressed was a letter
+  if (isLetter(buttonValue)) {
+
+    lastKeyEnter = false;
+    handleLetter(buttonValue);
+
+  // If Backspace was pressed
+  } else if (buttonValue === "Back") {
+
+    lastKeyEnter = false;
+    handleBackspace();
+
+  // If Enter was pressed 
+  } else if (buttonValue === "Enter") {
+    
+    lastKeyEnter = true;
+    handleEnter();
+    }
+}
+
 
 function showLetter(letter) {
   let row = String(numGuesses + 1);
@@ -169,3 +213,10 @@ async function handleIncorrectGuess() {
   }
   return guessArray;
 }
+
+
+// Event listeners
+document.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("keyup", handleKeyUp);
+  document.querySelector(".keyboard").addEventListener("click", handleButtonClick);
+});
