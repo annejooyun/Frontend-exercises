@@ -38,7 +38,7 @@ button{
 
 }
 
-#back , #enter{
+#back, #enter{
     width: 100px;
 }
 
@@ -51,14 +51,45 @@ button{
 
 .main-header {
     font-size: 150%;
+    margin: 0;
 }
 
 h2 {
     font-size: 80%;
+    margin: 0; 
+    padding-bottom:0.5rem;
+}
+
+.keyboard {
+    padding-top: 1rem;
 }
 
 .keyboard-row {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#hard-mode-button {
+    width: 130px;
+    height: 50px;
+    border-radius: 25px;
+    border: none;
+    background-color: #ccc;
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 4px;
+    margin: 1rem 0;
+}
+
+#hard-mode-button.on {
+    background-color: #4CAF50;
+}
+
+#hard-mode-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
 }

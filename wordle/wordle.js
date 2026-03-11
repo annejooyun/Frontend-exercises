@@ -1,6 +1,7 @@
 let inputedGuess = "";
 let numGuesses = 0;
 let lastKeyEnter = false;
+let hardModeEnabled = false;
 
 const maxLengthGuess = 5;
 const maxNumGuesses = 6;
@@ -249,8 +250,24 @@ async function handleIncorrectGuess() {
 }
 
 
+
+function toggleHardMode() {
+  hardModeEnabled = !hardModeEnabled;
+  const button = document.querySelector("#hard-mode-button");
+  
+  if (hardModeEnabled) {
+    button.textContent = "Hard mode: ON ";
+    button.classList.add("on");
+  } else {
+    button.textContent = "Hard mode: OFF";
+    button.classList.remove("on");
+  }
+}
+
+
 // Event listeners
 document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("keyup", handleKeyUp);
   document.querySelector(".keyboard").addEventListener("click", handleButtonClick);
+  document.querySelector("#hard-mode-button").addEventListener("click", toggleHardMode);
 });
