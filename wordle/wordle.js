@@ -1,11 +1,19 @@
-let inputedGuess = "";
-let numGuesses = 0;
-let lastKeyEnter = false;
-let hardModeEnabled = false;
-let hardModeLettersGuessed = "";
+const gameState = {
+  inputedGuess: "",
+  numGuesses: 0,
+  lastKeyEnter: false,
+  hardModeEnabled: false,
+  hardModeLettersGuessed: ""
+}
 
 const maxLengthGuess = 5;
 const maxNumGuesses = 6;
+
+const RESULT = {
+  WRONG: 0,
+  WRONG_POSITION: 1,
+  CORRECT: 2
+};
 
 const wordOfTheDayPromise = getWordOfTheDay();
 
@@ -20,14 +28,14 @@ async function getWordOfTheDay() {
 
 async function checkGuess() {
   const wordOfTheDayString = await wordOfTheDayPromise;
-  return wordOfTheDayString === inputedGuess;
+  return wordOfTheDayString === gameState.inputedGuess;
 }
 
 
 async function checkIsWord() {
   const promise = await fetch("https://words.dev-apis.com/validate-word", {
     method: "POST",
-    body: JSON.stringify({ word: inputedGuess }),
+    body: JSON.stringify({ word: gameState.inputedGuess}),
   });
   const processedResponse = await promise.json();
   return processedResponse.validWord;
@@ -35,24 +43,24 @@ async function checkIsWord() {
 
 
 function handleLetter(letter) {
-  if (inputedGuess.length < maxLengthGuess && numGuesses < maxNumGuesses) {
-      inputedGuess += letter.toLowerCase();
+  if (gameState.inputedGuess.length < maxLengthGuess && gameState.numGuesses < maxNumGuesses) {
+      gameState.inputedGuess += letter.toLowerCase();
       showLetter(letter);
   }
 }
 
 function handleBackspace() {
-  if (inputedGuess === "") {
+  if (gameState.inputedGuess === "") {
       // Do nothing
     } else {
       removeLastLetter();
-      inputedGuess = inputedGuess.slice(0, -1);
+      gameState.inputedGuess = gameState.inputedGuess.slice(0, -1);
     }
 }
 
 async function handleEnter() {
     // If guess is not long enough
-  if (inputedGuess.length < maxLengthGuess) {
+  if (gameState.inputedGuess.length < maxLengthGuess) {
     alert("The guess is not long enough. Insert a 5-letter word!");
   } else {
     // Check if guess is correct
@@ -74,7 +82,7 @@ async function handleEnter() {
 
 async function handleEnterHardMode() {
     // If guess is not long enough
-  if (inputedGuess.length < maxLengthGuess) {
+  if (gameState.inputedGuess.length < maxLengthGuess) {
     alert("The guess is not long enough. Insert a 5-letter word!");
   } else {
     // Check if guess is correct
@@ -82,22 +90,22 @@ async function handleEnterHardMode() {
       processCorrectGuess();
     } else {
       // Check hardmode logic
-      let copyHardModeLettersGuessed = hardModeLettersGuessed;
+      let copyHardModeLettersGuessed = gameState.hardModeLettersGuessed;
 
       for(let i = 0; i < maxLengthGuess; i++){
-        let letter = inputedGuess[i];
+        let letter = gameState.inputedGuess[i];
 
-        if (hardModeLettersGuessed.includes(letter)) {
+        if (gameState.hardModeLettersGuessed.includes(letter)) {
           copyHardModeLettersGuessed = copyHardModeLettersGuessed.replace(letter, "");
         }
       }
-      console.log(hardModeLettersGuessed);
+      console.log(gameState.hardModeLettersGuessed);
       if (copyHardModeLettersGuessed.length !== 0) {
         alert("Guess does not include found letters.")
 
       } else {
         // Reset HardModeLettersGuessed
-        hardModeLettersGuessed  = "";
+        gameState.hardModeLettersGuessed  = "";
 
         // Check if guess is a valid word
         if (await checkIsWord()) {
@@ -115,8 +123,8 @@ async function handleEnterHardMode() {
 
 
 async function processCorrectGuess() {
-  changeButtonColors([2, 2, 2, 2, 2]);
-  changeGuessColors([2, 2, 2, 2, 2]);
+  changeButtonColors([RESULT.CORRECT, RESULT.CORRECT, RESULT.CORRECT, RESULT.CORRECT, RESULT.CORRECT]);
+  changeGuessColors([RESULT.CORRECT, RESULT.CORRECT, RESULT.CORRECT, RESULT.CORRECT, RESULT.CORRECT]);
   await new Promise(resolve => setTimeout(resolve, 100));
   alert("Congrats, you guessed it!!");
 }
@@ -126,10 +134,10 @@ async function validateAndProcessWrongGuess() {
   const resultArray = await handleIncorrectGuess();
   changeButtonColors(resultArray);
   changeGuessColors(resultArray);
-  numGuesses += 1;
-  inputedGuess = "";
+  gameState.numGuesses+= 1;
+  gameState.inputedGuess= "";
   
-  if (numGuesses === maxNumGuesses) {
+  if (gameState.numGuesses=== maxNumGuesses) {
     const word = await wordOfTheDayPromise;
     alert("Out of guesses. The word was " + word.toUpperCase());
   }
@@ -141,18 +149,18 @@ async function handleKeyUp(event) {
 
   // If key is a letter
   if (isLetter(key)) {
-    lastKeyEnter = false;
+    gameState.lastKeyEnter = false;
     handleLetter(key);
 
     // If key is Backspace
   } else if (key === "Backspace") {
-    lastKeyEnter = false;
+    gameState.lastKeyEnter = false;
     handleBackspace();
 
     // If key is Enter
-  } else if (key === "Enter" && !lastKeyEnter) {
-    lastKeyEnter = true;
-    if(hardModeEnabled) {
+  } else if (key === "Enter" && !gameState.lastKeyEnter) {
+    gameState.lastKeyEnter = true;
+    if(gameState.hardModeEnabled) {
       handleEnterHardMode();
     } else {
       handleEnter();
@@ -172,20 +180,20 @@ async function handleButtonClick(event) {
   // If button pressed was a letter
   if (isLetter(buttonValue)) {
 
-    lastKeyEnter = false;
+    gameState.lastKeyEnter = false;
     handleLetter(buttonValue);
 
   // If Backspace was pressed
   } else if (buttonValue === "Back") {
 
-    lastKeyEnter = false;
+    gameState.lastKeyEnter = false;
     handleBackspace();
 
   // If Enter was pressed 
   } else if (buttonValue === "Enter") {
     
-    lastKeyEnter = true;
-    if (hardModeEnabled) {
+    gameState.lastKeyEnter = true;
+    if (gameState.hardModeEnabled) {
       handleEnterHardMode();
     } else {
       handleEnter();
@@ -195,19 +203,19 @@ async function handleButtonClick(event) {
 
 
 function showLetter(letter) {
-  let row = String(numGuesses + 1);
-  let col = String(inputedGuess.length);
+  const row = String(gameState.numGuesses + 1);
+  const col = String(gameState.inputedGuess.length);
 
-  let className = ".box_" + row + "-" + col;
+  const className = ".box_" + row + "-" + col;
   document.querySelector(className).innerText = letter.toUpperCase();
 }
 
 
 function removeLastLetter() {
-  let row = String(numGuesses + 1);
-  let col = String(inputedGuess.length);
+  const row = String(gameState.numGuesses + 1);
+  const col = String(gameState.inputedGuess.length);
 
-  let className = ".box_" + row + "-" + col;
+  const className = ".box_" + row + "-" + col;
   document.querySelector(className).innerText = "";
 }
 
@@ -219,8 +227,8 @@ function isLetter(letter) {
 
 function changeGuessColors(resultArray) {
   for (let i = 1; i <= maxLengthGuess; i++) {
-    row = numGuesses + 1;
-    className = ".box_" + row + "-" + i;
+    const row = gameState.numGuesses + 1;
+    const className = ".box_" + row + "-" + i;
     switch (resultArray[i - 1]) {
       case 0: // Wrong letter
         document.querySelector(className).style.backgroundColor = "gray";
@@ -241,7 +249,7 @@ function changeGuessColors(resultArray) {
 
 function changeButtonColors(resultArray) {
   for (let i = 0; i < maxLengthGuess; i++) {
-    const letter = inputedGuess[i].toUpperCase();
+    const letter = gameState.inputedGuess[i].toUpperCase();
 
 
     // Find the button with matching text content
@@ -277,21 +285,21 @@ async function handleIncorrectGuess() {
 
   // 0: Incorrect letter, 1: Correct letter in incorrect spot
   // 2: Correct letter in correct spot
-  let guessArray = [0, 0, 0, 0, 0];
+  let guessArray = [RESULT.WRONG, RESULT.WRONG, RESULT.WRONG, RESULT.WRONG, RESULT.WRONG];
 
   // Check for correct letters in correct spots
   // This is done first, in case of correct letters in incorrect spots early in the guess
   // F. ex: Guess: POPPY word: HOPPY
   for (let i = 0; i < maxLengthGuess; i++) {
-    let letter = inputedGuess.charAt(i);
+    let letter = gameState.inputedGuess.charAt(i);
 
     if (wordOfTheDayArray.includes(letter)) {
       if (wordOfTheDayArray[i] === letter) {
-        guessArray[i] = 2;
+        guessArray[i] = RESULT.CORRECT;
         wordOfTheDayArray[i] = "0";
         // Save correct letters if HardModeEnabled
-        if (hardModeEnabled) {
-          hardModeLettersGuessed += letter;
+        if (gameState.hardModeEnabled) {
+          gameState.hardModeLettersGuessed += letter;
         }
       }
     }
@@ -299,17 +307,17 @@ async function handleIncorrectGuess() {
 
   // Now check the rest of the letters
   for (let j = 0; j < maxLengthGuess; j++) {
-    let letter = inputedGuess.charAt(j);
+    let letter = gameState.inputedGuess.charAt(j);
 
     // Check for correct letters in incorrect spots
     if (wordOfTheDayArray.includes(letter)) {
-      guessArray[j] = 1;
+      guessArray[j] = RESULT.WRONG_POSITION;
       // Find index for the letter in guess
-      k = wordOfTheDayArray.indexOf(letter);
+      const k = wordOfTheDayArray.indexOf(letter);
       wordOfTheDayArray[k] = "0";
 
-      if(hardModeEnabled) {
-        hardModeLettersGuessed += letter;
+      if(gameState.hardModeEnabled) {
+        gameState.hardModeLettersGuessed += letter;
       }
 
       // Check for incorrect letters but do not overwrite the correct ones
@@ -317,18 +325,18 @@ async function handleIncorrectGuess() {
       guessArray[j] = 0;
     }
   }
-  console.log(hardModeLettersGuessed);
+  console.log(gameState.hardModeLettersGuessed);
 
   return guessArray;
 }
 
 
 function toggleHardMode() {
-  if (numGuesses === 0) {
-    hardModeEnabled = !hardModeEnabled;
+  if (gameState.numGuesses=== 0) {
+    gameState.hardModeEnabled = !gameState.hardModeEnabled;
     const button = document.querySelector("#hard-mode-button");
     
-    if (hardModeEnabled) {
+    if (gameState.hardModeEnabled) {
       button.textContent = "Hard mode: ON ";
       button.classList.add("on");
     } else {
