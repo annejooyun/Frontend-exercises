@@ -2,11 +2,13 @@ let inputedGuess = "";
 let numGuesses = 0;
 let lastKeyEnter = false;
 let hardModeEnabled = false;
+let hardModeLettersGuessed = "";
 
 const maxLengthGuess = 5;
 const maxNumGuesses = 6;
 
 const wordOfTheDayPromise = getWordOfTheDay();
+
 
 async function getWordOfTheDay() {
   const promise = await fetch("https://words.dev-apis.com/word-of-the-day");
@@ -15,10 +17,12 @@ async function getWordOfTheDay() {
   return wordRes;
 }
 
+
 async function checkGuess() {
   const wordOfTheDayString = await wordOfTheDayPromise;
   return wordOfTheDayString === inputedGuess;
 }
+
 
 async function checkIsWord() {
   const promise = await fetch("https://words.dev-apis.com/validate-word", {
@@ -79,6 +83,57 @@ async function handleEnter() {
   }
 }
 
+async function handleEnterHardMode() {
+    // If guess is not long enough
+  if (inputedGuess.length < maxLengthGuess) {
+    alert("The guess is not long enough. Insert a 5-letter word!");
+  } else {
+    // Check if guess is correct
+    if (await checkGuess()) {
+      changeButtonColors([2, 2, 2, 2, 2]);
+      changeGuessColors([2, 2, 2, 2, 2]);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      alert("Congrats, you guessed it!!");
+    } else {
+      // Check hardmode logic
+      let copyHardModeLettersGuessed = hardModeLettersGuessed;
+
+      for(i = 0; i < maxLengthGuess; i++){
+        let letter = inputedGuess[i];
+
+        if (hardModeLettersGuessed.includes(letter)) {
+          copyHardModeLettersGuessed = copyHardModeLettersGuessed.replace(letter, "");
+        }
+      }
+      console.log(hardModeLettersGuessed);
+      if (copyHardModeLettersGuessed.length !== 0) {
+        alert("Guess does not include found letters.")
+      } else {
+        // Reset HardModeLettersGuessed
+        hardModeLettersGuessed  = "";
+        // Check if guess is a valid word
+        if (await checkIsWord()) {
+          const resultArray = await handleIncorrectGuess();
+          changeButtonColors(resultArray);
+          changeGuessColors(resultArray);
+          numGuesses += 1;
+          inputedGuess = "";
+          // Check if user is out of guesses
+          if (numGuesses === maxNumGuesses) {
+            word = await wordOfTheDayPromise;
+            await new Promise(resolve => setTimeout(resolve, 100));
+            alert("Out of guesses. The word was " +  word.toUpperCase())
+          }
+          // Alert if guess is not a valid word
+        } else {
+          alert("That is not a valid word!");
+        }
+      }
+      
+    }
+  }
+}
+
 
 async function handleKeyUp(event) {
   const key = event.key;
@@ -96,19 +151,20 @@ async function handleKeyUp(event) {
     // If key is Enter
   } else if (key === "Enter" && !lastKeyEnter) {
     lastKeyEnter = true;
-    handleEnter();
-      // maybe code hardmode?
+    if(hardModeEnabled) {
+      handleEnterHardMode();
+    } else {
+      handleEnter();
+    }
   }
 }
 
 
 async function handleButtonClick(event) {
-  
   const buttonValue = event.target.innerHTML;
-  console.log(buttonValue);
  
   if (event.target.tagName !== "BUTTON") {
-    console.log("Not a button");
+    // Do nothing
     return;
   }
 
@@ -141,6 +197,7 @@ function showLetter(letter) {
   document.querySelector(className).innerText = letter.toUpperCase();
 }
 
+
 function removeLastLetter() {
   let row = String(numGuesses + 1);
   let col = String(inputedGuess.length);
@@ -149,9 +206,11 @@ function removeLastLetter() {
   document.querySelector(className).innerText = "";
 }
 
+
 function isLetter(letter) {
   return /^[a-zA-Z]$/.test(letter);
 }
+
 
 function changeGuessColors(resultArray) {
   for (let i = 1; i <= maxLengthGuess; i++) {
@@ -225,7 +284,10 @@ async function handleIncorrectGuess() {
       if (wordOfTheDayArray[i] === letter) {
         guessArray[i] = 2;
         wordOfTheDayArray[i] = "0";
-        console.log(wordOfTheDayArray);
+        // Save correct letters if HardModeEnabled
+        if (hardModeEnabled) {
+          hardModeLettersGuessed += letter;
+        }
       }
     }
   }
@@ -241,26 +303,35 @@ async function handleIncorrectGuess() {
       k = wordOfTheDayArray.indexOf(letter);
       wordOfTheDayArray[k] = "0";
 
+      if(hardModeEnabled) {
+        hardModeLettersGuessed += letter;
+      }
+
       // Check for incorrect letters but do not overwrite the correct ones
     } else if (wordOfTheDayArray[j] !== "0") {
       guessArray[j] = 0;
     }
   }
+  console.log(hardModeLettersGuessed);
+
   return guessArray;
 }
 
 
-
 function toggleHardMode() {
-  hardModeEnabled = !hardModeEnabled;
-  const button = document.querySelector("#hard-mode-button");
-  
-  if (hardModeEnabled) {
-    button.textContent = "Hard mode: ON ";
-    button.classList.add("on");
+  if (numGuesses === 0) {
+    hardModeEnabled = !hardModeEnabled;
+    const button = document.querySelector("#hard-mode-button");
+    
+    if (hardModeEnabled) {
+      button.textContent = "Hard mode: ON ";
+      button.classList.add("on");
+    } else {
+      button.textContent = "Hard mode: OFF";
+      button.classList.remove("on");
+    }
   } else {
-    button.textContent = "Hard mode: OFF";
-    button.classList.remove("on");
+    alert("Hard mode cannot be enabled after initial guess. Refresh the page and enable then.");
   }
 }
 
