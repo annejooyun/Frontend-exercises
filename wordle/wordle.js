@@ -57,25 +57,14 @@ async function handleEnter() {
   } else {
     // Check if guess is correct
     if (await checkGuess()) {
-      changeButtonColors([2, 2, 2, 2, 2]);
-      changeGuessColors([2, 2, 2, 2, 2]);
-      await new Promise(resolve => setTimeout(resolve, 100));
-      alert("Congrats, you guessed it!!");
+      processCorrectGuess();
+
     } else {
       // Check if guess is a valid word
       if (await checkIsWord()) {
-        const resultArray = await handleIncorrectGuess();
-        changeButtonColors(resultArray);
-        changeGuessColors(resultArray);
-        numGuesses += 1;
-        inputedGuess = "";
-        // Check if user is out of guesses
-        if (numGuesses === maxNumGuesses) {
-          word = await wordOfTheDayPromise;
-          await new Promise(resolve => setTimeout(resolve, 100));
-          alert("Out of guesses. The word was " +  word.toUpperCase())
-        }
-        // Alert if guess is not a valid word
+        validateAndProcessWrongGuess();
+
+      // Alert if guess is not a valid word
       } else {
         alert("That is not a valid word!");
       }
@@ -90,15 +79,12 @@ async function handleEnterHardMode() {
   } else {
     // Check if guess is correct
     if (await checkGuess()) {
-      changeButtonColors([2, 2, 2, 2, 2]);
-      changeGuessColors([2, 2, 2, 2, 2]);
-      await new Promise(resolve => setTimeout(resolve, 100));
-      alert("Congrats, you guessed it!!");
+      processCorrectGuess();
     } else {
       // Check hardmode logic
       let copyHardModeLettersGuessed = hardModeLettersGuessed;
 
-      for(i = 0; i < maxLengthGuess; i++){
+      for(let i = 0; i < maxLengthGuess; i++){
         let letter = inputedGuess[i];
 
         if (hardModeLettersGuessed.includes(letter)) {
@@ -108,29 +94,44 @@ async function handleEnterHardMode() {
       console.log(hardModeLettersGuessed);
       if (copyHardModeLettersGuessed.length !== 0) {
         alert("Guess does not include found letters.")
+
       } else {
         // Reset HardModeLettersGuessed
         hardModeLettersGuessed  = "";
+
         // Check if guess is a valid word
         if (await checkIsWord()) {
-          const resultArray = await handleIncorrectGuess();
-          changeButtonColors(resultArray);
-          changeGuessColors(resultArray);
-          numGuesses += 1;
-          inputedGuess = "";
-          // Check if user is out of guesses
-          if (numGuesses === maxNumGuesses) {
-            word = await wordOfTheDayPromise;
-            await new Promise(resolve => setTimeout(resolve, 100));
-            alert("Out of guesses. The word was " +  word.toUpperCase())
-          }
-          // Alert if guess is not a valid word
+          validateAndProcessWrongGuess();
+
+        // Alert if guess is not a valid word
         } else {
           alert("That is not a valid word!");
         }
       }
       
     }
+  }
+}
+
+
+async function processCorrectGuess() {
+  changeButtonColors([2, 2, 2, 2, 2]);
+  changeGuessColors([2, 2, 2, 2, 2]);
+  await new Promise(resolve => setTimeout(resolve, 100));
+  alert("Congrats, you guessed it!!");
+}
+
+
+async function validateAndProcessWrongGuess() {
+  const resultArray = await handleIncorrectGuess();
+  changeButtonColors(resultArray);
+  changeGuessColors(resultArray);
+  numGuesses += 1;
+  inputedGuess = "";
+  
+  if (numGuesses === maxNumGuesses) {
+    const word = await wordOfTheDayPromise;
+    alert("Out of guesses. The word was " + word.toUpperCase());
   }
 }
 
@@ -184,8 +185,12 @@ async function handleButtonClick(event) {
   } else if (buttonValue === "Enter") {
     
     lastKeyEnter = true;
-    handleEnter();
+    if (hardModeEnabled) {
+      handleEnterHardMode();
+    } else {
+      handleEnter();
     }
+  }
 }
 
 
