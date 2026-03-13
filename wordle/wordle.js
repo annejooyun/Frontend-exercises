@@ -19,10 +19,15 @@ const wordOfTheDayPromise = getWordOfTheDay();
 
 
 async function getWordOfTheDay() {
-  const promise = await fetch("https://words.dev-apis.com/word-of-the-day");
-  const { word: wordRes } = await promise.json();
-  //console.log(wordRes);
-  return wordRes;
+  try {
+    const promise = await fetch("https://words.dev-apis.com/word-of-the-day");
+    const { word: wordRes } = await promise.json();
+    //console.log(wordRes);
+    return wordRes;
+  } catch (error) {
+    alert("Error loarding game. Please refresh.")
+    throw(error);
+  }
 }
 
 
@@ -90,18 +95,10 @@ async function handleEnterHardMode() {
       processCorrectGuess();
     } else {
       // Check hardmode logic
-      let copyHardModeLettersGuessed = gameState.hardModeLettersGuessed;
-
-      for(let i = 0; i < maxLengthGuess; i++){
-        let letter = gameState.inputedGuess[i];
-
-        if (gameState.hardModeLettersGuessed.includes(letter)) {
-          copyHardModeLettersGuessed = copyHardModeLettersGuessed.replace(letter, "");
-        }
-      }
-      console.log(gameState.hardModeLettersGuessed);
-      if (copyHardModeLettersGuessed.length !== 0) {
-        alert("Guess does not include found letters.")
+      missingLetters = checkForMissingLetters();
+    
+      if (missingLetters.length !== 0) {
+        alert(`Guess must include: ${missingLetters.join(', ').toUpperCase()}`);
 
       } else {
         // Reset HardModeLettersGuessed
@@ -141,6 +138,16 @@ async function validateAndProcessWrongGuess() {
     const word = await wordOfTheDayPromise;
     alert("Out of guesses. The word was " + word.toUpperCase());
   }
+}
+
+
+function checkForMissingLetters() {
+  const missingLetters = gameState.hardModeLettersGuessed
+    .split('')
+    .filter((letter, index, self) => self.indexOf(letter) === index) // unique
+    .filter(letter => !gameState.inputedGuess.includes(letter));
+  
+    return (missingLetters);
 }
 
 
@@ -230,15 +237,15 @@ function changeGuessColors(resultArray) {
     const row = gameState.numGuesses + 1;
     const className = ".box_" + row + "-" + i;
     switch (resultArray[i - 1]) {
-      case 0: // Wrong letter
+      case RESULT.WRONG: // Wrong letter
         document.querySelector(className).style.backgroundColor = "gray";
         document.querySelector(className).style.color = "white";
         break;
-      case 1: // Correct letter in wrong spot
+      case RESULT.WRONG_POSITION: // Correct letter in wrong spot
         document.querySelector(className).style.backgroundColor = "goldenrod";
         document.querySelector(className).style.color = "white";
         break;
-      case 2: // Correct letter in correct spot
+      case RESULT.CORRECT: // Correct letter in correct spot
         document.querySelector(className).style.backgroundColor = "darkgreen";
         document.querySelector(className).style.color = "white";
         break;
@@ -283,8 +290,6 @@ async function handleIncorrectGuess() {
   const wordOfTheDayString = await wordOfTheDayPromise;
   let wordOfTheDayArray = wordOfTheDayString.split("");
 
-  // 0: Incorrect letter, 1: Correct letter in incorrect spot
-  // 2: Correct letter in correct spot
   let guessArray = [RESULT.WRONG, RESULT.WRONG, RESULT.WRONG, RESULT.WRONG, RESULT.WRONG];
 
   // Check for correct letters in correct spots
@@ -325,8 +330,6 @@ async function handleIncorrectGuess() {
       guessArray[j] = 0;
     }
   }
-  console.log(gameState.hardModeLettersGuessed);
-
   return guessArray;
 }
 
