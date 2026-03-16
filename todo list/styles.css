@@ -1,0 +1,45 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-size: 1rem;
+    background-color: rgb(204, 200, 191);
+}
+
+.section {
+    width: 70%;
+    max-width: 500px;
+    height: fit-content;
+    width: 500px;
+    background-color: white;
+    border: 2px solid rgb(176, 166, 166);
+    border-radius: 10px;
+}
+
+input {
+    width: 400px;
+    height: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    grid-area: input;
+}
+
+.todo-list{
+    grid-area: todo;
+}
+
+.footer {
+    position: relative; /*right?*/
+}
+
+p {
+    grid-area: tasks-text;
+}
+
+#clear-btn {
+    grid-area: clear-btn;
+
+}
