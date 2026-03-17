@@ -4,40 +4,53 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    font-size: 1rem;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 1.2rem;
     background-color: rgb(204, 200, 191);
 }
 
 .section {
+    padding: 30px;
     width: 500px;
     max-width: 500px;
     height: fit-content;
     width: 500px;
     background-color: white;
-    border: 2px solid rgb(176, 166, 166);
     border-radius: 10px;
 }
 
 .input-div {
     display: flex;
     justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 input {
-    width: 400px;
-    height: 40px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: 1.5rem;
-    grid-area: input;
+    width: 480px;
+    height: 50px;
+    padding-left: 10px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    border: 1px solid rgb(235, 235, 235);
+    border-radius: 5px;
 }
 
-.todo-list{
-    grid-area: todo;
+input:focus {
+    border: 1px solid rgb(176, 166, 166);
+    outline: none;
+    box-shadow: 0 0 5px rgba(176, 166, 166, 0.5);
 }
+
 
 .footer {
     position: relative; /*right?*/
     display: flex;
     justify-content: space-between;
+}
+
+#clear-btn {
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100px;
 }
